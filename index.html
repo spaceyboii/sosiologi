@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sosiologi Super Seru!</title>
+  <style>
+  /* Tambahkan di dalam tag <style> di <head> */
+.matching-container {
+    display: flex;
+    justify-content: space-around; /* Spasi antar kolom */
+    align-items: flex-start;    /* Biar sejajar di atas */
+    position: relative;       /* Untuk canvas */
+    padding: 20px;         /* Padding */
+    border: 1px solid #ccc;    /* Border */
+    border-radius: 8px;       /* Rounded */
+    background-color: #f9f9f9; /* Light background */
+    min-height: 200px; /* Ensure minimum height*/
+
+}
+
+.column {
+    width: 40%; /* Lebar masing-masing kolom */
+     display: flex;
+     flex-direction: column;
+     align-items: flex-start; /* Change to flex start for the column on the left*/
+
+}
+
+.match-item {
+    padding: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: white;
+    cursor: pointer;        /* Cursor berubah saat hover */
+     transition: background-color 0.2s, transform 0.1s; /* Sedikit animasi */
+    position: relative; /*  Dot (titik)*/
+    width: calc(100% - 25px); /* Leave some space*/
+}
+
+#column-left .match-item{  /* atur width item yang ada di kolom kiri*/
+    margin-right: 25px;
+    margin-left: 10px;
+
+}
+#column-right .match-item{ /* atur width item di kolom kanan */
+    margin-right: 10px;
+}
+
+.match-item:hover {
+     background-color: #f0f0f0; /* Efek hover */
+     transform: scale(1.02); /* Sedikit membesar */
+
+}
+
+/* Tambahkan CSS untuk dot (titik penghubung) */
+.dot {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #aaa; /* Warna abu-abu */
+    position: absolute;
+   top: 50%;          /* Pusatkan vertikal */
+    transform: translateY(-50%); /* Sesuaikan posisi */
+   cursor: pointer; /* Hand cursor on dots as well.*/
+     z-index: 2;       /* Pastikan dot di atas elemen lain*/
+
+}
+
+
+#column-left .dot {
+
+   right: 0;         /* Di sisi kanan (kolom kiri) */
+
+}
+
+#column-right .dot{
+ left: 0px;
+}
+
+#match-canvas{
+position: absolute; /* Kanvas Absolute di matching container*/
+ top: 0;
+left: 0;
+   width: 100%;   /* Full width */
+   height: 100%;  /* Full height*/
+ z-index: 1;    /* z-index agar di bawah item*/
+  pointer-events: none; /* Biar kanvas ga block click */
+
+}
+
+/* ... CSS lain tetap ... */
+
+/* ... (keyframes glitter, dll. tetap) ... */
+
+/* style buat line */
+
+ .line {
+  position: absolute;
+   z-index: 1;
+     width: 2px;          /* Ketebalan garis */
+     background-color: #336699;/* Warna garis */
+      }
+     body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Font yang lebih modern */
+      background-color: #f0f8ff;
+      margin: 0;
+      padding: 0;
+    }
+
+      /* Container and Basic Styling */
+    #container {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 30px; /* Lebih banyak padding */
+      background-color: white;
+      border-radius: 15px; /* Lebih rounded */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Efek shadow lebih tebal */
+       animation: fadeIn 0.8s ease-in-out;
+    }
+    @keyframes fadeIn{ /* Keyframes Animasi*/
+      from{
+         opacity: 0;
+          transform: translateY(-20px);
+       }
+       to {
+            opacity: 1;
+           transform: translateY(0);
+          }
+    }
+
+    h1, h2, h3 {
+      color: #336699;
+      text-align: center;
+       margin-bottom: 1rem; /*Spacing antar Judul */
+    }
+     h1 {
+            font-size: 2.5em; /* Ukuran font H1 lebih besar */
+            margin-bottom: 0.5em; /* Sedikit margin bottom */
+
+     }
+      h2{
+          font-size: 1.8em;
+          margin-top: 0.8em;
+      }
+
+    .section {
+      margin-bottom: 40px; /* Jarak antar section lebih besar */
+      border-bottom: 3px solid #336699; /* Garis pemisah lebih tebal */
+      padding-bottom: 20px;
+       position: relative;  /* untuk animasi scroll reveal */
+        opacity: 0;        /* awalnya hidden, untuk scroll reveal */
+        transform: translateY(30px);  /* agak di bawah, untuk animasi */
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;  /* animasi smooth */
+
+    }
+    .section.is-visible {
+      opacity: 1;
+      transform: translateY(0);  /* balikin ke posisi normal saat kelihatan */
+
+    }
+      .section:last-child {
+      border-bottom: none;
+    }
+    .section-content{
+        /* Container baru agar bisa animasi fadeIn */
+      position: relative;
+
+    }
+
+
+
+   /*---- Timeline----*/
+    .timeline {
+        position: relative;
+        padding-left: 40px; /* Padding kiri lebih besar untuk timeline */
+
+      }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 15px;
+        height: 100%;
+        width: 4px;  /* Garis timeline lebih tebal */
+        background-color: #336699;
+        border-radius: 2px;
+    }
+   .timeline-item {
+          position: relative;
+            margin-bottom: 25px;
+             padding: 15px;         /* Tambah padding dalam timeline item */
+             background-color: #f9f9f9; /* Background terang */
+             border-radius: 8px;   /* Rounded corners */
+             box-shadow: 0 2px 5px rgba(0,0,0,0.1);  /* Efek shadow */
+      }
+
+     .timeline-item::before {
+      content: '';
+      position: absolute;
+      top: 20px;  /* Posisikan lingkaran di tengah konten */
+      left: -26px;  /* Sesuaikan dengan padding baru dan garis tebal */
+      width: 16px;   /* Lingkaran lebih besar */
+      height: 16px;
+      border-radius: 50%;
+      background-color: #336699;
+       border: 3px solid white; /* Border putih */
+        z-index: 1;         /* Pastikan lingkaran di atas garis timeline */
+    }
+
+     .timeline-item:hover::before {
+         background-color: #f39c12; /* Perubahan warna saat hover */
+      }
+     .timeline-item h3 {
+        margin-top: 0;
+        margin-bottom: 8px;  /* Lebih banyak space antara judul dan deskripsi */
+        font-size: 1.2em;  /* Ukuran judul sedikit lebih besar */
+    }
+
+
+
+   /*------ Accordion ------*/
+      .accordion {
+        background-color: #e7e7e7; /* Warna latar sedikit berbeda */
+        color: #333; /* Warna teks lebih gelap */
+        cursor: pointer;
+        padding: 20px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 16px; /* Ukuran font sedikit lebih besar */
+        transition: background-color 0.4s, color 0.4s; /* Transisi lebih halus */
+        margin-bottom: 8px; /* Jarak antar accordion lebih besar */
+        border-radius: 8px; /* Lebih rounded */
+        border: 1px solid #ccc; /* Tambah border */
+    }
+
+     .accordion:hover, .active {
+          background-color: #ddd; /* Hover lebih terang */
+      color: #000;  /* Teks jadi hitam saat aktif/hover */
+
+     }
+      .accordion:after {
+          content: '\02795'; /* Unicode character for "plus" sign */
+           font-size: 18px;   /* Ukuran ikon lebih besar */
+          color: #555;      /* Warna ikon sedikit lebih gelap */
+            float: right;
+              margin-left: 5px;
+        }
+
+      .active:after {
+           content: "\2796"; /* Unicode character for "minus" sign */
+        }
+
+    .panel {
+      padding: 20px;
+        background-color: white;
+         max-height: 0;
+           overflow: hidden;
+            transition: max-height 0.3s ease-out; /* Transisi lebih smooth */
+            border-radius: 0 0 8px 8px;    /* Rounded bottom corners */
+              border: 1px solid #ccc;         /* Tambah border */
+             border-top: none;          /* Hilangkan border atas agar menyatu */
+
+    }
+
+    /*------ Tokoh Cards -------*/
+   .tokoh-container {
+          display: flex;
+         flex-wrap: wrap;
+         justify-content: space-around;
+          gap: 25px;
+     }
+    .tokoh-card {
+       width: 280px;  /* Lebar card sedikit lebih besar */
+        border: 2px solid #eee; /* Border lebih tebal */
+      border-radius: 12px;    /* Lebih rounded */
+      padding: 20px;      /* Padding lebih besar */
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16); /* Shadow lebih pronounced */
+         text-align: center;
+           transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hover effect */
+           background-color: #fff;
+
+        }
+      .tokoh-card:hover {
+           transform: translateY(-5px);  /* Efek "terangkat" saat hover */
+           box-shadow: 0 6px 12px rgba(0,0,0,0.2); /* Shadow lebih besar saat hover */
+
+      }
+    .tokoh-card img {
+      width: 120px;    /* Gambar lebih besar */
+       height: 120px;
+      border-radius: 50%;
+      margin-bottom: 15px;   /* Jarak gambar-judul */
+        border: 4px solid #f39c12;  /* Border di gambar */
+
+     }
+       .tokoh-card h3 {
+           font-size: 1.3em;  /* Judul sedikit lebih besar */
+         margin-bottom: 5px;
+       }
+
+
+
+      /*------- Quiz ------*/
+      .quiz-container {
+         margin-top: 30px;
+
+       }
+     .question {
+           margin-bottom: 20px; /* Lebih banyak space */
+             font-weight: bold;
+              font-size: 1.1em;  /* Pertanyaan lebih besar */
+
+        }
+       .options label {
+            display: block;
+           margin-bottom: 8px; /* Lebih banyak space antar pilihan */
+           padding: 12px;
+          border: 1px solid #ddd;
+        border-radius: 6px;   /* Lebih rounded */
+          cursor: pointer;
+         transition: background-color 0.3s;
+         background-color: #f9f9f9;   /* Sedikit background */
+        }
+
+     .options label:hover {
+      background-color: #e9e9e9;
+    }
+    .options input[type="radio"] {
+      margin-right: 12px;
+    }
+   button {
+     background-color: #336699;
+       color: white;
+      padding: 12px 20px;   /* Padding tombol lebih besar */
+       border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      font-size: 17px;  /* Font tombol lebih besar */
+     transition: background-color 0.3s;
+    }
+       button:hover {
+      background-color: #254e77;
+    }
+
+    #result {
+           margin-top: 15px; /* Lebih banyak space di atas hasil */
+          font-weight: bold;
+         font-size: 1.1em;
+      }
+  table {
+        width: 100%;
+      border-collapse: collapse;
+        margin-top: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Sedikit shadow */
+        overflow: hidden; /* Biar border radius muncul di table */
+        border-radius: 8px;
+    }
+
+    th, td {
+         border: 1px solid #ddd;
+           padding: 12px; /* Padding lebih besar */
+        text-align: left;
+      }
+
+      th {
+        background-color: #f8f8f8; /* Warna background header */
+          font-weight: bold;
+
+    }
+
+
+    /*-------Drag n drop-----------*/
+
+    /* Tambahkan ini di bagian <style> (CSS) kamu */
+
+ .drag-area-container {
+      display: flex;
+       flex-direction: column; /* Susun area drag dan drop secara vertikal */
+       align-items: center;  /* Pusatkan secara horizontal */
+       margin-bottom: 30px;
+
+    }
+ .drag-area, .drop-area{
+   margin-bottom: 15px; /* Spasi antara elemen*/
+ }
+
+    .drag-area, .drop-area {
+         display: flex;
+       flex-wrap: wrap;
+          justify-content: center; /* Pusatkan item-itemnya */
+           gap: 15px;
+          /* Gaya untuk petunjuk di area drop */
+          }
+
+.drop-area-hint {
+       font-style: italic;
+        color: #888;
+           margin-top: 10px;
+         }
+    .draggable {
+           width: 180px;      /* Lebar elemen yang di-drag */
+        height: auto;    /* Tinggi otomatis menyesuaikan konten */
+          background-color: #f39c12;
+          color: white;
+          border: none;         /* Hilangkan border bawaan */
+      border-radius: 8px;
+         padding: 15px;     /* Padding lebih besar */
+        cursor: grab;
+          text-align: center;
+           margin: 10px auto;        /* Pusatkan secara horizontal */
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      transition: background-color 0.3s;
+      display: flex;
+       align-items: center;      /* Pusatkan vertikal */
+      justify-content: center;    /* Pusatkan horizontal */
+      font-size: 14px;       /* Perbesar sedikit teks */
+
+
+      }
+
+  .draggable:active {
+      cursor: grabbing;
+       background-color: #e08e0b;  /* Warna lebih gelap saat di-drag */
+       box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+  }
+
+    .dropzone {
+         width: 200px;       /* Dropzone lebih lebar */
+          height: 80px;      /* Dropzone lebih tinggi */
+         border: 3px dashed #ccc;  /* Border lebih jelas */
+           padding: 10px;      /* Padding dalam dropzone */
+          margin: 10px;
+      text-align: center;
+      display: flex;       /* Flexbox untuk centering */
+      align-items: center;      /* Center vertikal */
+         justify-content: center;   /* Center horizontal */
+          border-radius: 8px;      /* Sedikit border radius */
+
+     }
+       .dropzone.drag-over {
+      border-color: #336699; /* Warna border saat drag di atasnya */
+        background-color: #f0f8ff;   /* Background saat drag di atasnya */
+    }
+    .dropzone-small {   /* Style khusus dropzone yang kecil di drag n drop tonnies*/
+       width: auto; /* Lebar sesuai dengan container parent*/
+        padding: 10px 20px;   /* Hanya atur padding kiri dan kanan, bukan height fix */
+        height: auto;        /* Biarkan tinggi menyesuaikan dengan konten (teksnya) */
+       margin: 5px 0;
+       justify-content: flex-start;
+     }
+        /*----Interactive Infographic-------- */
+
+        /* Gaya untuk container infografik */
+    .infographic-container {
+         background-color: #f5f5f5;  /* Light background */
+         padding: 20px;
+      border-radius: 10px;
+           margin-bottom: 30px;
+             display: flex; /*pakai flex biar space di infographic kebagi*/
+         justify-content: space-around;  /* agar item berjarak */
+    }
+        .infographic {
+          display: flex;
+          justify-content: space-around;
+          align-items: flex-start;
+        flex-wrap: wrap;
+            }
+         .info-item {
+           width: 220px;    /* Lebar item lebih besar */
+       padding: 20px;   /* Padding lebih besar */
+           border: 1px solid #ddd;
+         border-radius: 10px;    /* Lebih rounded */
+           margin: 12px;      /* Margin lebih besar */
+           background-color: white;
+          position: relative;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+           transition: transform 0.2s;  /* Transisi saat hover */
+        }
+         .info-item:hover {
+             transform: scale(1.03);   /* Sedikit membesar saat hover */
+          }
+
+            .tooltip {
+           visibility: hidden;
+          width: 280px;     /* Tooltip lebih lebar */
+            background-color: #333;
+           color: white;
+            text-align: center;
+         border-radius: 8px;   /* Lebih rounded */
+          padding: 8px;        /* Padding lebih besar */
+        position: absolute;
+           z-index: 1;
+         bottom: 125%;
+           left: 50%;
+         margin-left: -140px; /* Setengah dari width */
+         opacity: 0;
+         transition: opacity 0.3s, visibility 0.3s;
+       box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+
+      }
+          .tooltip::after {
+       content: "";
+          position: absolute;
+          top: 100%;
+            left: 50%;
+           margin-left: -6px;   /* Sedikit disesuaikan */
+        border-width: 6px;
+          border-style: solid;
+          border-color: #333 transparent transparent transparent;
+           }
+
+        .info-item:hover .tooltip {
+        visibility: visible;
+          opacity: 1;
+        }
+          .info-item h3 {
+            font-size: 1.2em;    /* Judul dalam info item */
+            margin-bottom: 0.5em;
+
+        }
+
+  </style>
+</head>
+<body>
+
+<div id="container">
+  <h1>Jelajahi Dunia Sosiologi!</h1>
+
+    <!-- ======= Sejarah Sosiologi ======= -->
+   <div class="section" id="sejarah">
+    <h2>Sejarah Sosiologi: Perjalanan Menuju Pemahaman Masyarakat</h2>
+      <div class="section-content">
+
+     <div class="timeline">
+      <div class="timeline-item">
+        <h3>Abad Pencerahan</h3>
+        <p>Masa ketika akal sehat dan logika mulai menggantikan dogma. <br> Tokoh-tokoh seperti John Locke, Voltaire, dan Rousseau mulai mempertanyakan tatanan sosial yang ada. Ini adalah fondasi penting untuk berpikir sosiologis.</p>
+      </div>
+      <div class="timeline-item">
+        <h3>Revolusi Industri</h3>
+        <p>Perubahan besar dari pertanian ke industri menciptakan masalah sosial baru: urbanisasi, kemiskinan, kriminalitas. Para pemikir mulai mencari cara ilmiah untuk memahami dan mengatasi masalah ini.  Ini adalah pemicu utama lahirnya sosiologi.</p>
+      </div>
+        <div class="timeline-item">
+            <h3>Revolusi Prancis</h3>
+            <p> Revolusi ini menunjukkan betapa kuatnya ide-ide tentang kebebasan, kesetaraan, dan persaudaraan. Ini mengguncang struktur kekuasaan dan memberikan pelajaran tentang perubahan sosial yang revolusioner.</p>
+            </div>
+      <div class="timeline-item">
+        <h3>Sosiologi Modern</h3>
+        <p>Ilmu sosiologi berkembang pesat.  Banyak tokoh dan pemikiran penting bermunculan untuk menjelaskan dinamika masyarakat.</p>
+      </div>
+      </div>
+      </div>
+    </div>
+
+    <!-- ======== Tokoh-tokoh Sosiologi ========== -->
+    <div class="section" id="tokoh">
+     <h2>Tokoh-Tokoh Sosiologi dan Pemikirannya</h2>
+        <div class="section-content">
+           <div class="tokoh-container">
+          <div class="tokoh-card">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Auguste_Comte2.jpg/220px-Auguste_Comte2.jpg" alt="Auguste Comte">
+            <h3>Auguste Comte</h3>
+              <p>"Bapak Sosiologi". Ia memperkenalkan istilah "sosiologi" dan positivisme (masyarakat bisa dipelajari secara ilmiah).</p>
+           </div>
+
+        <div class="tokoh-card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Herbert_Spencer.jpg/220px-Herbert_Spencer.jpg" alt="Herbert Spencer">
+              <h3>Herbert Spencer</h3>
+            <p>Menerapkan teori evolusi Darwin ke masyarakat (Darwinisme Sosial).  Konsep "survival of the fittest".</p>
+         </div>
+           <div class="tokoh-card">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Karl_Marx_001.jpg/220px-Karl_Marx_001.jpg" alt="Karl Marx">
+
+               <h3>Karl Marx</h3>
+                 <p>Fokus pada konflik kelas antara pemilik modal (borjuis) dan pekerja (proletar). Perubahan sosial terjadi melalui revolusi.</p>
+            </div>
+
+          <div class="tokoh-card">
+               <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/%C3%89mile_Durkheim.jpg/220px-%C3%89mile_Durkheim.jpg" alt="Émile Durkheim">
+
+              <h3>Émile Durkheim</h3>
+               <p>Mempelajari fakta sosial secara objektif.  Konsep solidaritas sosial (mekanik dan organik) dan anomie.</p>
+        </div>
+          <div class="tokoh-card">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Max_Weber_1894.jpg/220px-Max_Weber_1894.jpg" alt="Max Weber">
+
+             <h3>Max Weber</h3>
+               <p>Fokus pada tindakan sosial individu dan maknanya. Konsep tindakan sosial, rasionalisasi, dan birokrasi.</p>
+          </div>
+
+         </div>
+       </div>
+     </div>
+
+       <!-- ====== Fungsi Sosiologi ========= -->
+       <div class="section" id="fungsi">
+        <h2>Fungsi Sosiologi dalam Kehidupan</h2>
+        <div class="section-content">
+
+            <button class="accordion">Penelitian</button>
+         <div class="panel">
+           <p>Sosiologi menggunakan metode ilmiah untuk mengumpulkan dan menganalisis data. Ini penting untuk memahami masalah sosial secara mendalam dan menemukan solusi yang efektif.</p>
+        </div>
+
+         <button class="accordion">Perencanaan Sosial</button>
+         <div class="panel">
+        <p>Sosiologi membantu perencana kebijakan memahami kebutuhan masyarakat, potensi, dan dampak kebijakan. Ini memastikan kebijakan lebih tepat sasaran.</p>
+
+        </div>
+
+           <button class="accordion">Pemecahan Masalah Sosial</button>
+        <div class="panel">
+       <p>Dengan kerangka teoritis sosiologi, kita bisa menganalisis akar masalah seperti kriminalitas atau diskriminasi, dan mencari solusi yang berkelanjutan.</p>
+       </div>
+
+          <button class="accordion">Pendidikan</button>
+         <div class="panel">
+         <p>Sosiologi membuat kita lebih kritis, reflektif, toleran, dan empatik terhadap lingkungan sosial kita.</p>
+
+      </div>
+         <button class="accordion">Evaluasi</button>
+            <div class="panel">
+            <p>Sosiologi digunakan untuk mengevaluasi program/kebijakan sosial. Apakah programnya efektif? Apa dampaknya? Bagaimana memperbaikinya?</p>
+          </div>
+      </div>
+        </div>
+        <!-- ========== Ragam Penelitian Sosial ======== -->
+     <div class="section" id="ragam-penelitian">
+     <h2>Ragam Penelitian Sosial</h2>
+          <div class="section-content">
+
+           <p>Penelitian sosial itu seperti detektif yang menyelidiki masyarakat! Ada banyak cara melakukannya:</p>
+            <button class="accordion">Penelitian Berdasarkan Tujuan</button>
+           <div class="panel">
+         <ul>
+              <li><strong>Eksploratif:</strong> Menjelajahi fenomena yang masih baru/belum banyak diketahui.</li>
+                <li><strong>Deskriptif:</strong> Memberi gambaran detail tentang suatu fenomena.</li>
+               <li><strong>Eksplanatif:</strong> Mencari hubungan sebab-akibat (misalnya, "Apakah X menyebabkan Y?").</li>
+                <li><strong>Evaluatif:</strong> Menilai keberhasilan suatu program atau kebijakan.</li>
+               </ul>
+
+           </div>
+            <button class="accordion">Penelitian Berdasarkan Metode</button>
+           <div class="panel">
+           <ul>
+              <li><strong>Kuantitatif:</strong> Data berupa angka (data numerik) dianalisis statistik. Contoh: survei dengan kuesioner.</li>
+           <li><strong>Kualitatif:</strong> Data berupa kata-kata, gambar, observasi untuk memahami makna.  Contoh: wawancara mendalam.</li>
+               </ul>
+             </div>
+
+            <button class="accordion">Penelitian Berdasarkan Waktu</button>
+            <div class="panel">
+              <ul>
+             <li><strong>Cross-Sectional:</strong> Data diambil pada satu waktu tertentu.</li>
+            <li><strong>Longitudinal:</strong> Data diambil berulang kali dalam jangka waktu tertentu untuk melihat perubahan.</li>
+          </ul>
+        </div>
+            <button class="accordion">Proses Penelitian Sosial</button>
+          <div class="panel">
+            <ol>
+                  <li><strong>Merumuskan Masalah:</strong> Apa yang ingin kamu teliti?</li>
+                 <li><strong>Studi Pustaka:</strong> Baca teori dan penelitian sebelumnya yang relevan.</li>
+             <li><strong>Merumuskan Hipotesis</strong> (untuk penelitian kuantitatif): Buat dugaan sementara.</li>
+              <li><strong>Menentukan Metode:</strong> Pilih metode yang paling sesuai (kuantitatif/kualitatif).</li>
+                <li><strong>Mengumpulkan Data:</strong> Lakukan penelitian di lapangan.</li>
+                   <li><strong>Menganalisis Data:</strong> Cari pola dan makna dalam data yang terkumpul.</li>
+               <li><strong>Menarik Kesimpulan:</strong> Jawab pertanyaan penelitianmu.</li>
+              <li><strong>Menyusun Laporan:</strong> Tulis laporan penelitian yang lengkap.</li>
+              </ol>
+            </div>
+           </div>
+        </div>
+    <!-- ======== Tindakan Sosial Max Weber ======= -->
+
+       <div class="section" id="tindakan-sosial">
+        <h2>Tindakan Sosial Menurut Max Weber</h2>
+         <div class="section-content">
+
+          <p>Tindakan sosial itu bukan sembarang tindakan!  Itu adalah tindakan individu yang punya <em>makna</em> subjektif dan ditujukan ke orang lain. Weber membaginya menjadi empat tipe *ideal*:</p>
+
+       <div class="infographic-container">
+           <div class="infographic">
+
+             <div class="info-item">
+            <h3>Rasional Instrumental</h3>
+               <span class="tooltip">Bertindak berdasarkan pertimbangan matang tentang tujuan dan cara yang paling <em>efektif</em>. Contohnya, seorang pengusaha yang memilih strategi pemasaran yang paling menguntungkan.  Pertanyaannya: "Apa cara terbaik untuk mencapai tujuan ini?"</span>
+            </div>
+               <div class="info-item">
+                   <h3>Rasional Nilai</h3>
+                     <span class="tooltip">Bertindak berdasarkan <em>nilai-nilai</em> yang diyakini, tanpa terlalu memikirkan konsekuensi praktisnya.  Contoh: Seseorang ikut demonstrasi karena percaya pada keadilan, meskipun berisiko ditangkap.</span>
+                  </div>
+
+             <div class="info-item">
+                    <h3>Afektif</h3>
+                   <span class="tooltip">Bertindak karena dorongan <em>emosi</em> atau perasaan saat itu. Contoh: Marah lalu membentak orang lain, tanpa berpikir panjang.</span>
+                  </div>
+               <div class="info-item">
+                <h3>Tradisional</h3>
+                <span class="tooltip">Bertindak karena <em>kebiasaan</em> atau tradisi yang sudah ada. Contoh: Melakukan upacara adat karena "sudah dari dulu begitu."</span>
+               </div>
+             </div>
+            </div>
+       <p><strong>Penting:</strong> Keempat tipe ini adalah tipe <em>ideal</em>.  Dalam dunia nyata, tindakan sosial seringkali campuran dari beberapa tipe ini!</p>
+         </div>
+        </div>
+        <!-- ====== Norma Sosial ========= -->
+      <div class="section" id="norma">
+       <h2>Tingkatan Norma Sosial</h2>
+        <div class="section-content">
+
+          <p>Norma sosial adalah aturan-aturan dalam masyarakat.  Kekuatannya dalam "memaksa" kita untuk patuh berbeda-beda:</p>
+           <table>
+        <thead>
+           <tr>
+            <th>Tingkatan Norma</th>
+             <th>Kekuatan Memaksa</th>
+            <th>Contoh</th>
+             <th>Sanksi</th>
+          </tr>
+             </thead>
+
+              <tbody>
+            <tr>
+              <td>Cara (Folkways)</td>
+               <td>Lemah</td>
+                 <td>Cara berpakaian yang aneh, cara makan yang kurang sopan.</td>
+                  <td>Cibiran, dianggap tidak sopan.</td>
+
+          </tr>
+           <tr>
+               <td>Kebiasaan (Mores)</td>
+                 <td>Sedang</td>
+             <td>Berbohong, tidak menghormati orang tua.</td>
+              <td>Dikucilkan, dianggap melanggar nilai.</td>
+             </tr>
+              <tr>
+           <td>Tata Kelakuan (Customs)</td>
+          <td>Kuat</td>
+            <td>Aturan perkawinan, upacara adat.</td>
+             <td>Sanksi formal, hukum adat.</td>
+           </tr>
+          <tr>
+               <td>Hukum (Laws)</td>
+           <td>Sangat Kuat</td>
+          <td>Mencuri, membunuh, melanggar lalu lintas.</td>
+             <td>Denda, penjara, hukuman mati.</td>
+        </tr>
+
+        </tbody>
+       </table>
+         </div>
+        </div>
+    <!-- ========= Lembaga Sosial ========== -->
+        <div class="section" id="lembaga">
+      <h2>Lembaga Sosial</h2>
+          <div class="section-content">
+      <p>Lembaga sosial adalah sistem norma dan aturan yang mengatur pola perilaku dan hubungan sosial dalam bidang kehidupan tertentu. Tujuannya untuk memenuhi kebutuhan dasar masyarakat.</p>
+
+           <h3>Ciri-Ciri Lembaga Sosial (Drag and Drop):</h3>
+             <div class="drag-area-container">  <!-- Container baru -->
+
+                 <div class="drag-area">
+               <div class="draggable" draggable="true" id="drag1">Memiliki Tujuan Jelas</div>
+             <div class="draggable" draggable="true" id="drag2">Memiliki Struktur & Organisasi</div>
+           <div class="draggable" draggable="true" id="drag3">Memiliki Norma & Aturan</div>
+          <div class="draggable" draggable="true" id="drag4">Memiliki Simbol & Identitas</div>
+             <div class="draggable" draggable="true" id="drag5">Bersifat Relatif Permanen</div>
+
+           </div>
+         <div class="drop-area">
+
+             <div class="dropzone" id="drop1"></div>
+                 <div class="dropzone" id="drop2"></div>
+                 <div class="dropzone" id="drop3"></div>
+               <div class="dropzone" id="drop4"></div>
+                 <div class="dropzone" id="drop5"></div>
+
+         </div>
+
+        <div class="drop-area-hint">Seret ciri-ciri ke kotak yang tersedia</div>
+
+       </div><!-- end drag area container-->
+       <p id="successMessage">Semua benar! Kamu memahami ciri-ciri lembaga sosial.</p>
+
+
+
+           <button class="accordion">Contoh Lembaga Sosial Utama</button>
+            <div class="panel">
+         <ul>
+         <li><strong>Keluarga:</strong> Untuk reproduksi, sosialisasi, kasih sayang, perlindungan.</li>
+            <li><strong>Pendidikan:</strong> Mentransfer pengetahuan, keterampilan, nilai-nilai ke generasi muda.</li>
+           <li><strong>Ekonomi:</strong> Mengatur produksi, distribusi, dan konsumsi barang dan jasa.</li>
+        <li><strong>Agama:</strong> Memberi makna hidup, pedoman moral, solidaritas.</li>
+          <li><strong>Negara:</strong> Menjaga ketertiban, keamanan, dan kesejahteraan warga.</li>
+
+       </ul>
+
+         </div>
+
+       </div>
+      </div>
+
+
+
+       <!-- =========== Klasifikasi Kelompok Sosial =========== -->
+
+<!-- Bagian HTML (di dalam <body>, tempat yang sebelumnya) -->
+
+<!-- Di dalam <div class="section" id="kelompok">, ganti bagian drag-and-drop -->
+<h2>Klasifikasi Kelompok Sosial (Tonnies)</h2>
+
+<div class="section-content">
+    <p>Ferdinand Tönnies membedakan kelompok sosial berdasarkan tingkat keakraban.  Hubungkan konsep dengan deskripsi yang tepat!</p>
+
+    <div class="matching-container">
+        <div class="column" id="column-left">
+            <div class="match-item" data-match="1">Gemeinschaft</div>
+            <div class="match-item" data-match="2">Gesellschaft</div>
+              <!-- Tambahkan dot (lingkaran kecil) -->
+            <div class="dot" data-match="1"></div>
+             <div class="dot" data-match="2"></div>
+
+        </div>
+
+        <div class="column" id="column-right">
+          <div class="match-item" data-match="3">Contoh: Perusahaan, organisasi</div>  <!-- Urutan acak -->
+           <div class="match-item" data-match="4">Hubungan kekeluargaan, pertemanan</div>
+
+           <!-- Tambahkan dot (lingkaran kecil) -->
+         <div class="dot" data-match="3"></div>
+           <div class="dot" data-match="4"></div>
+          </div>
+
+        <canvas id="match-canvas"></canvas> <!-- Untuk gambar garis -->
+    </div>
+    <p id="matching-result" style="color:green; font-weight: bold;"></p>
+
+    <button class="accordion">Perbedaan Utama</button>
+    <div class="panel">
+     <!-- Tabel Perbedaan Utama (SAMA) -->
+     <table>
+        <thead>
+            <tr>
+              <th>Fitur</th>
+                <th>Gemeinschaft (Paguyuban)</th>
+               <th>Gesellschaft (Patembayan)</th>
+          </tr>
+          </thead>
+          <tbody>
+              <tr><td>Dasar Ikatan</td><td>Kekeluargaan, tradisi, teman dekat</td><td>Kepentingan, kontrak kerja</td></tr>
+             <tr><td>Sifat Hubungan</td><td>Personal, emosional, informal</td><td>Impersonal, formal, rasional</td></tr>
+              <tr><td>Tujuan</td><td>Kebersamaan, kebutuhan bersama</td><td>Pencapaian tujuan pribadi/kelompok</td></tr>
+            <tr><td>Solidaritas</td><td>Alami (kedekatan emosional)</td><td>Kontrak/kesepakatan</td></tr>
+
+           </tbody>
+
+        </table>
+
+    </div>
+    </div>
+	
+        <!-- ======== Masalah Sosial ======== -->
+      <div class="section" id="masalah-sosial">
+       <h2>Permasalahan Sosial Akibat Pengelompokan</h2>
+         <div class="section-content">
+         <p>Pengelompokan sosial itu wajar, tapi bisa menimbulkan masalah seperti:</p>
+          <div class="infographic-container">
+           <div class="infographic">
+               <div class="info-item">
+           <h3>Prasangka</h3>
+            <span class="tooltip">Sikap negatif ke kelompok tertentu berdasarkan stereotip yang belum tentu benar.</span>
+
+         </div>
+
+            <div class="info-item">
+                <h3>Diskriminasi</h3>
+               <span class="tooltip">Tindakan membeda-bedakan perlakuan karena karakteristik tertentu (ras, gender, dll.).</span>
+              </div>
+
+           <div class="info-item">
+           <h3>Stereotip</h3>
+             <span class="tooltip">Generalisasi berlebihan tentang kelompok, tanpa melihat perbedaan individu.</span>
+
+             </div>
+
+            <div class="info-item">
+            <h3>Etnosentrisme</h3>
+                 <span class="tooltip">Menganggap kelompok sendiri paling unggul, dan menilai kelompok lain dari sudut pandang sendiri.</span>
+
+              </div>
+			            <!-- Melanjutkan dari bagian sebelumnya... -->
+                <div class="info-item">
+                <h3>Konflik Antar Kelompok</h3>
+                    <span class="tooltip">Perbedaan kepentingan, nilai, sumber daya, yang bisa memicu konflik merugikan.</span>
+                 </div>
+              <div class="info-item">
+                    <h3>Ketidaksetaraan</h3>
+                 <span class="tooltip">Ada kelompok yang punya kekuasaan, status, dan sumber daya lebih banyak dari kelompok lain.</span>
+                  </div>
+
+               <div class="info-item">
+                <h3>Rasisme</h3>
+                     <span class="tooltip">Keyakinan satu ras lebih unggul, dan diskriminasi berdasarkan ras.</span>
+
+            </div>
+            <div class="info-item">
+              <h3>Seksime</h3>
+              <span class="tooltip">Keyakinan satu jenis kelamin lebih unggul, dan diskriminasi berdasarkan jenis kelamin.</span>
+           </div>
+             </div>
+           </div><!--  infographic container -->
+        </div> <!-- section-content -->
+     </div>  <!-- section -->
+
+      <!-- ======= Faktor Penyebab Konflik ======== -->
+   <div class="section" id="penyebab-konflik">
+      <h2>Faktor Penyebab Konflik Sosial</h2>
+       <div class="section-content">
+
+        <p>Konflik itu bagian dari dinamika masyarakat.  Ini beberapa pemicunya:</p>
+         <ul>
+       <li><strong>Perbedaan Kepentingan:</strong> Kepentingan ekonomi, politik, atau sosial yang bertabrakan.</li>
+       <li><strong>Perbedaan Nilai dan Kepercayaan:</strong> Pandangan berbeda tentang benar/salah, baik/buruk.</li>
+          <li><strong>Perbedaan Kebudayaan:</strong> Norma, adat, bahasa, atau agama yang berbeda.</li>
+       <li><strong>Perubahan Sosial Cepat:</strong> Perubahan mendadak mengganggu keseimbangan.</li>
+       <li><strong>Ketidakadilan Sosial:</strong> Perasaan diperlakukan tidak adil, kesenjangan.</li>
+        <li><strong>Komunikasi Buruk:</strong> Kesalahpahaman, miskomunikasi.</li>
+       <li><strong>Identitas Kelompok Kuat:</strong> Loyalitas berlebihan ke kelompok sendiri (<em>in-group</em>), curiga ke kelompok lain (<em>out-group</em>).</li>
+        <li><strong>Provokator:</strong> Ada pihak yang sengaja memicu/memperkeruh konflik.</li>
+
+      </ul>
+     </div> <!-- Section Content -->
+    </div> <!-- section -->
+
+
+        <!-- ======= Akomodasi Konflik ======== -->
+     <div class="section" id="akomodasi">
+        <h2>Bentuk-Bentuk Akomodasi</h2>
+         <div class="section-content">
+           <p>Akomodasi adalah upaya untuk meredakan atau menyelesaikan konflik.  Bentuknya bermacam-macam:</p>
+         <div class="infographic-container">
+           <div class="infographic">
+
+           <div class="info-item">
+          <h3>Koersi</h3>
+           <span class="tooltip">Penyelesaian paksa oleh pihak yang lebih kuat (bukan akomodasi ideal).  Contoh: Polisi membubarkan demonstrasi.</span>
+
+              </div>
+           <div class="info-item">
+           <h3>Kompromi</h3>
+            <span class="tooltip">Kedua pihak saling mengurangi tuntutan.  Contoh: Negosiasi gaji antara karyawan dan perusahaan.</span>
+
+         </div>
+        <div class="info-item">
+             <h3>Mediasi</h3>
+              <span class="tooltip">Melibatkan pihak ketiga netral sebagai penengah.  Contoh: Mediator dalam sengketa warisan.</span>
+             </div>
+
+          <div class="info-item">
+             <h3>Arbitrasi</h3>
+                <span class="tooltip">Pihak ketiga mengambil keputusan yang mengikat. Contoh: Arbiter dalam sengketa bisnis.</span>
+
+               </div>
+
+        <div class="info-item">
+          <h3>Konsiliasi</h3>
+         <span class="tooltip">Mempertemukan pihak yang berkonflik untuk diskusi. Lebih informal dari mediasi/arbitrasi.</span>
+         </div>
+          <div class="info-item">
+          <h3>Toleransi</h3>
+                <span class="tooltip">Saling menghargai perbedaan, walau ada beda pendapat/keyakinan.</span>
+
+           </div>
+             <div class="info-item">
+           <h3>Stalemate</h3>
+              <span class="tooltip">Pihak yang berkonflik tidak bisa mencapai kesepakatan, konflik tertunda.</span>
+           </div>
+             <div class="info-item">
+              <h3>Ajudikasi</h3>
+               <span class="tooltip">Penyelesaian melalui jalur hukum (pengadilan).</span>
+           </div>
+        </div>
+          </div> <!--Infographic Container -->
+       </div>  <!-- Section-COntent -->
+
+     </div> <!-- section -->
+
+         <!-- ======== Ragam Perubahan Sosial =========== -->
+
+   <div class="section" id="perubahan-sosial">
+       <h2>Ragam Perubahan Sosial</h2>
+        <div class="section-content">
+
+        <p>Perubahan sosial itu transformasi dalam struktur sosial, perilaku, hubungan, dan nilai budaya. Macam-macamnya:</p>
+
+          <button class="accordion">Berdasarkan Kecepatan</button>
+          <div class="panel">
+             <ul>
+          <li><strong>Lambat (Evolusi):</strong> Perubahan bertahap dalam waktu lama (contoh: perkembangan teknologi pertanian).</li>
+        <li><strong>Cepat (Revolusi):</strong> Perubahan mendadak, fundamental, sering disertai gejolak (contoh: Revolusi Industri).</li>
+        </ul>
+
+          </div>
+           <button class="accordion">Berdasarkan Perencanaan</button>
+            <div class="panel">
+          <ul>
+             <li><strong>Direncanakan:</strong> Sengaja dirancang dan dilaksanakan (contoh: program pembangunan).</li>
+               <li><strong>Tidak Direncanakan:</strong> Terjadi di luar kendali, konsekuensi tidak terduga (contoh: perubahan gaya hidup karena teknologi).</li>
+
+         </ul>
+
+          </div>
+        <button class="accordion">Berdasarkan Skala</button>
+            <div class="panel">
+               <ul>
+             <li><strong>Skala Kecil:</strong> Dampaknya terbatas (contoh: perubahan mode pakaian).</li>
+             <li><strong>Skala Besar:</strong> Dampaknya luas ke seluruh masyarakat (contoh: globalisasi).</li>
+           </ul>
+
+            </div>
+
+        <button class="accordion">Berdasarkan Sifat</button>
+           <div class="panel">
+              <ul>
+               <li><strong>Struktural:</strong> Perubahan dalam organisasi sosial, sistem kekuasaan (contoh: dari masyarakat agraris ke industri).</li>
+          <li><strong>Kultural:</strong> Perubahan nilai, norma, kepercayaan (contoh: perubahan peran gender).</li>
+             </ul>
+
+        </div>
+     </div>
+       </div> <!-- section -->
+      <!-- ====== Globalisasi ======== -->
+     <div class="section" id="globalisasi">
+          <h2>Faktor Pendorong Globalisasi</h2>
+           <div class="section-content">
+
+      <p>Globalisasi itu proses integrasi dan interdependensi antarnegara di seluruh dunia.  Ini faktor-faktor utamanya:</p>
+
+          <div class="timeline">
+          <div class="timeline-item">
+                <h3>Teknologi Informasi & Komunikasi</h3>
+                <p>Internet, telepon seluler, media sosial membuat interaksi dan pertukaran informasi sangat cepat, tanpa batas geografis.</p>
+
+             </div>
+
+            <div class="timeline-item">
+             <h3>Teknologi Transportasi</h3>
+                <p>Pesawat terbang, kapal kontainer membuat pergerakan orang dan barang antar negara lebih cepat dan murah.</p>
+
+          </div>
+          <div class="timeline-item">
+           <h3>Liberalisasi Ekonomi</h3>
+              <p>Perdagangan bebas, penurunan tarif, investasi asing memfasilitasi aliran barang, jasa, modal.</p>
+              </div>
+           <div class="timeline-item">
+               <h3>Organisasi Internasional</h3>
+                  <p>PBB, WTO, IMF, Bank Dunia memfasilitasi kerja sama global.</p>
+
+                 </div>
+             <div class="timeline-item">
+                  <h3>Perubahan Politik Dunia</h3>
+                  <p>Runtuhnya Uni Soviet membuka peluang kerja sama global yang lebih luas.</p>
+
+           </div>
+
+         <div class="timeline-item">
+          <h3>Tuntutan Pasar dan Konsumen</h3>
+                <p>Konsumen di berbagai negara punya selera yang makin mirip terhadap produk global.</p>
+
+                 </div>
+        <div class="timeline-item">
+           <h3>Migrasi dan Mobilitas Penduduk</h3>
+              <p>Peningkatan migrasi memperkuat hubungan antar masyarakat di dunia.</p>
+
+          </div>
+           <div class="timeline-item">
+              <h3>Masalah Global Bersama</h3>
+                 <p>Perubahan iklim, pandemi, terorisme memerlukan kerja sama global.</p>
+         </div>
+
+           </div> <!-- Timeline -->
+         </div> <!-- Section Content -->
+
+        </div> <!--Section Globalisasi  -->
+
+    <!-- ========== Kuis Sosiologi =========== -->
+       <div class="section" id="kuis">
+         <h2>Kuis Sosiologi</h2>
+            <div class="section-content">
+
+        <div class="quiz-container">
+               <div class="question">1.  Siapakah yang dianggap sebagai "Bapak Sosiologi" dan pencetus positivisme?</div>
+
+            <div class="options">
+              <label><input type="radio" name="q1" value="a"> a) Karl Marx</label>
+            <label><input type="radio" name="q1" value="b"> b) Auguste Comte</label>
+           <label><input type="radio" name="q1" value="c"> c) Max Weber</label>
+               <label><input type="radio" name="q1" value="d"> d) Émile Durkheim</label>
+
+          </div>
+
+        <div class="question">2.  Tindakan yang dilakukan karena dorongan emosi sesaat termasuk tipe tindakan sosial?</div>
+      <div class="options">
+         <label><input type="radio" name="q2" value="a"> a) Rasional Instrumental</label>
+           <label><input type="radio" name="q2" value="b"> b) Rasional Nilai</label>
+           <label><input type="radio" name="q2" value="c"> c) Afektif</label>
+           <label><input type="radio" name="q2" value="d"> d) Tradisional</label>
+
+         </div>
+          <div class="question">3.  Manakah yang <em>bukan</em> merupakan ciri khas dari lembaga sosial?</div>
+       <div class="options">
+       <label><input type="radio" name="q3" value="a"> a) Memiliki tujuan yang jelas</label>
+              <label><input type="radio" name="q3" value="b"> b) Memiliki struktur dan organisasi</label>
+         <label><input type="radio" name="q3" value="c"> c) Selalu berubah dengan cepat</label>
+            <label><input type="radio" name="q3" value="d"> d) Memiliki norma dan aturan</label>
+
+         </div>
+            <div class="question">4.  Kelompok sosial yang ikatannya longgar dan didasarkan pada kepentingan disebut...?</div>
+           <div class="options">
+          <label><input type="radio" name="q4" value="a"> a) Gemeinschaft</label>
+               <label><input type="radio" name="q4" value="b"> b) Gesellschaft</label>
+         <label><input type="radio" name="q4" value="c"> c) Paguyuban</label>
+           <label><input type="radio" name="q4" value="d"> d) Primer</label>
+         </div>
+          <div class="question"> 5. Perubahan sosial yang terjadi secara perlahan dan bertahap disebut...</div>
+       <div class="options">
+            <label><input type="radio" name="q5" value="a">a) Revolusi</label>
+            <label><input type="radio" name="q5" value="b"> b) Evolusi</label>
+          <label><input type="radio" name="q5" value="c"> c) Reformasi</label>
+              <label><input type="radio" name="q5" value="d"> d) Inovasi</label>
+            </div>
+         <button onclick="checkAnswers()">Periksa Jawaban</button>
+         <div id="result"></div>
+
+      </div> <!-- quiz-container -->
+     </div>
+   </div>
+
+</div> <!-- container -->
+
+<script>
+  // ---- Accordion Functionality ----- (Tetap sama)
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.maxHeight) {
+      panel.style.maxHeight = null;
+    } else {
+      panel.style.maxHeight = panel.scrollHeight + "px";
+    }
+  });
+}
+
+    // ------- Quiz Functionality ---------- (Diperbarui)
+
+function checkAnswers() {
+      let score = 0;
+        const answers = ["b", "c", "c", "b", "b"]; // Kunci jawaban
+      const userAnswers = [
+        document.querySelector('input[name="q1"]:checked')?.value,
+           document.querySelector('input[name="q2"]:checked')?.value,
+            document.querySelector('input[name="q3"]:checked')?.value,
+         document.querySelector('input[name="q4"]:checked')?.value,
+            document.querySelector('input[name="q5"]:checked')?.value,
+         ];
+     for(let i=0; i<answers.length; i++){
+       if(userAnswers[i] === answers[i]){
+       score++;
+     }
+     }
+
+     // Tampilkan hasil dengan pesan yang lebih dinamis
+   let resultMessage = "";
+      if (score === answers.length) {
+            resultMessage = "Sempurna! 🎉 Kamu menguasai materi sosiologi!";
+          } else if (score >= 3) {
+          resultMessage = `Bagus sekali! Kamu mendapat ${score} dari ${answers.length} jawaban benar. 👍`;
+        } else if(score >= 1) {
+             resultMessage = `Kamu mendapat ${score} dari ${answers.length} jawaban benar.  Ayo, semangat belajar lagi! 😊`;
+
+     }
+
+   else{
+       resultMessage = "Kamu belum berhasil menjawab dengan benar. Jangan khawatir, baca lagi materinya dan coba lagi kuisnya! 💪";
+
+   }
+     document.getElementById("result").textContent = resultMessage;
+
+}
+
+ // --------- Drag and Drop (Ciri Lembaga) Functionality -----------
+
+   let draggedItem = null;
+
+ document.querySelectorAll('.draggable').forEach(item => {
+      item.addEventListener('dragstart', handleDragStart);
+      item.addEventListener('dragend', handleDragEnd); // Tambah dragend
+ });
+
+ document.querySelectorAll('.dropzone').forEach(zone => {
+        zone.addEventListener('dragover', handleDragOver);
+    zone.addEventListener('drop', handleDrop);
+        zone.addEventListener('dragenter', handleDragEnter); // Tambah dragenter
+     zone.addEventListener('dragleave', handleDragLeave); // Tambah dragleave
+     });
+
+
+
+     function handleDragStart(event) {
+         draggedItem = event.target;
+          event.dataTransfer.setData('text', event.target.id);
+     }
+
+ function handleDragOver(event) {
+       event.preventDefault();
+
+     }
+
+ function handleDragEnter(event){
+     if (event.target.classList.contains("dropzone") && event.target.children.length === 0) {
+         event.target.classList.add("drag-over");
+
+     }
+
+    }
+    function handleDragLeave(event){
+        event.target.classList.remove("drag-over");
+ }
+
+
+   function handleDrop(event) {
+        event.preventDefault();
+
+     if (!event.target.classList.contains("dropzone")) return;  // Cek dropzone
+     if (event.target.children.length > 0 ) return;   // Cek isinya
+
+     const data = event.dataTransfer.getData('text');  // ambil ID yang di drag
+     const draggedElement = document.getElementById(data); // ambil Element HTML
+
+       event.target.appendChild(draggedElement);
+        event.target.classList.remove("drag-over"); //Hapus Highlight
+
+         checkAllDropped();  // cek
+ }
+
+ function handleDragEnd(event){
+   // Hilangkan class ketika drag end
+        // event.target.classList.remove('dragging');
+  }
+
+
+
+     function checkAllDropped() {
+
+    const dropzones = document.querySelectorAll('.dropzone');
+        let allCorrect = true;
+
+    dropzones.forEach((zone, index) => {
+          // Periksa apakah ID elemen yang di-drag sama dengan index + 1
+           if(zone.firstChild?.id !== `drag${index + 1}`){
+            allCorrect = false;
+
+        }
+   });
+    if(allCorrect){
+        document.getElementById("successMessage").style.display ="block";
+
+        }
+    else {
+        document.getElementById('successMessage').style.display = "none";
+    }
+
+}
+
+ // Di dalam tag <script>, ganti bagian drag-and-drop Tonnies
+
+// ------ Menjodohkan dengan Garis (Tonnies) -------
+
+const columnLeft = document.getElementById('column-left');
+const columnRight = document.getElementById('column-right');
+const matchCanvas = document.getElementById('match-canvas');
+const matchContext = matchCanvas.getContext('2d'); // Context untuk gambar
+let selectedItem = null;
+let lines = [];  // Simpan data garis: [{from: element, to: element}]
+let canvasInitialized = false;  // Cek kanvas sudah di-resize
+
+
+//  inisialisasi event listeners
+
+// Pasang event listener ke DOT
+document.querySelectorAll('.dot').forEach(dot =>{
+    dot.addEventListener('click', handleDotClick);
+});
+
+// Fungsi utama Click (di dot)
+function handleDotClick(event){
+    const clickedDot = event.target;
+       //resize canvas
+    if(!canvasInitialized){
+    resizeCanvas();
+     canvasInitialized = true;
+  }
+    if (!selectedItem) {
+
+       // 1. Klik Pertama: Pilih item
+        selectedItem = clickedDot;
+          selectedItem.classList.add('selected');  // Kasih tanda visual (misal: highlight)
+          console.log("first click di item:",selectedItem)
+
+     }
+    else {
+       // 2. Klik Kedua: Cek apakah di kolom yang berbeda
+
+         if (selectedItem.closest('.column') !== clickedDot.closest('.column')) {  // Cek kolom BEDA
+         //  && !isLineDrawn(selectedItem, clickedDot)  BISA DITAMBAHKAN DI SINI (Optional)
+           drawLine(selectedItem, clickedDot);
+          lines.push({ from: selectedItem, to: clickedDot });  // Simpan data garis
+
+
+        resetSelection(); //reset
+
+         // Cek Jawaban setelah gambar garis baru
+           checkMatchingAnswers();
+
+    }
+       else {
+        resetSelection(); // Kalau klik di kolom sama, reset
+      }
+
+  }
+
+}
+
+// Reset setelah 2 klik
+
+function resetSelection() {
+    if (selectedItem) {
+          selectedItem.classList.remove('selected'); // Hapus tanda
+
+ }
+      selectedItem = null; // Reset
+
+   }
+
+
+// DrawLine Function
+
+function drawLine(startElement, endElement) {
+
+      matchContext.beginPath();
+
+        // Posisi titik awal dan akhir (DI TENGAH DOT)
+         const startRect = startElement.getBoundingClientRect(); //posisi dot 1
+      const endRect = endElement.getBoundingClientRect();    //posisi dot ke 2
+
+    const startX = startRect.left + startRect.width / 2 - matchCanvas.offsetLeft; // X tengah, relatif thd kanvas
+    const startY = startRect.top + startRect.height / 2 - matchCanvas.offsetTop ; // Y tengah
+    const endX = endRect.left + endRect.width / 2 - matchCanvas.offsetLeft; // X tengah, relatif thd kanvas;
+      const endY = endRect.top + endRect.height / 2 - matchCanvas.offsetTop ; // Y tengah
+
+      matchContext.moveTo(startX, startY);   // Mulai
+     matchContext.lineTo(endX, endY);       // Garis ke
+
+      matchContext.strokeStyle = '#336699';   // Warna garis
+     matchContext.lineWidth = 2;          // Ketebalan
+        matchContext.stroke();                // Gambar garisnya!
+
+     }
+
+
+
+// Opsional, Cek duplikat garis. DIPANGGIL SEBELUM DRAW LINE.
+ function isLineDrawn(startElem, endElem) {
+   return lines.some(line =>
+     (line.from === startElem && line.to === endElem) ||
+     (line.from === endElem && line.to === startElem)
+      );
+
+    }
+
+    // --- CEK JAWABAN --- (Dipanggil setelah garis baru digambar)
+     function checkMatchingAnswers() {
+       let correctMatches = 0;
+
+       // Cek berapa banyak garis yang benar.
+
+         lines.forEach(line => {
+             const fromMatch = line.from.dataset.match;
+
+          const toMatch = line.to.dataset.match;
+
+
+
+             // Logika Pengecekan Jawaban.
+
+          if ((fromMatch === '1' && (toMatch === '4')) ||
+                 (fromMatch === '2' && toMatch === '3')
+                   ) {
+           correctMatches++; //
+
+               }
+
+         });
+             //tampilkan pesan jika bener
+       const resultElement = document.getElementById('matching-result');
+
+       if (correctMatches === 2 && lines.length == 2) {
+      resultElement.textContent = "Benar! 🎉 Kamu memahami konsep Gemeinschaft dan Gesellschaft!";
+          resultElement.style.display = "block";
+        //  addGlitterEffect(resultElement); // Panggil fungsi glitter
+
+    } else {
+    //  removeGlitterEffect(resultElement)
+
+    }
+
+ }
+
+    // Resizing Canvas
+function resizeCanvas() {
+   matchCanvas.width = matchCanvas.offsetWidth;
+       matchCanvas.height = matchCanvas.offsetHeight;
+
+     // REDRAW garis jika ada resize!
+     redrawLines();
+
+  }
+
+ function redrawLines() {
+    lines.forEach(line => {
+    drawLine(line.from, line.to);   // Gambar ulang!
+
+   });
+
+  }
+
+ // Resizing
+      window.addEventListener('resize', resizeCanvas);
+
+
+
+
+// ---- Scroll Reveal Animation -----
+
+   const sections = document.querySelectorAll('.section');
+
+      const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+       entry.target.classList.toggle('is-visible', entry.isIntersecting);
+    });
+    }, {
+        threshold: 0.1 // Adjust this for when animation triggers, 0.1 means 10%
+        });
+
+     sections.forEach(section => {
+         observer.observe(section); //observe tiap section
+
+       });
+
+
+</script>
+
+</body>
+</html>
